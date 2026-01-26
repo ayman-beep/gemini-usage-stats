@@ -1,5 +1,5 @@
 {
-  "name": "gemini-usage-analytics",
+  "name": "gemini-usage-stats",
   "version": "1.0.0",
   "description": "Visual dashboard for Gemini CLI usage and costs",
   "main": "cli.js",
@@ -9,6 +9,12 @@
   "scripts": {
     "start": "node cli.js"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ayman-beep/gemini-usage-stats.git"
+  },
+  "author": "ayman-beep",
+  "license": "MIT",
   "engines": {
     "node": ">=14"
   }
