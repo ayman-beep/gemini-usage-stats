@@ -36,4 +36,4 @@ The tool works by:
 
 ## 📄 License
 
-MIT © Your Name
+MIT © ayman-beep
