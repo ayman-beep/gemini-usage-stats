@@ -2,7 +2,7 @@
 
 A high-performance visual dashboard for tracking your Gemini CLI usage, token consumption, and estimated API costs.
 
-![Gemini Analytics Dashboard](https://raw.githubusercontent.com/username/repo/main/screenshot.png) *(Placeholder for your screenshot)*
+![Uploading image.png…]()
 
 ## ✨ Features
 
