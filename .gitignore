@@ -1,0 +1,17 @@
+dashboard.html
+node_modules/
+*.pyc
+__pycache__/
+.env
+.DS_Store
+# Temporary files from previous steps
+check_hashes.py
+identify_projects.py
+identify_projects_v2.py
+deep_identify.py
+bulk_hash.py
+find_mappings.py
+get_first_messages.py
+paths.txt
+paths_3723.txt
+session_3723.txt

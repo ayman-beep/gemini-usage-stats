@@ -1,0 +1,15 @@
+{
+  "name": "gemini-usage-analytics",
+  "version": "1.0.0",
+  "description": "Visual dashboard for Gemini CLI usage and costs",
+  "main": "cli.js",
+  "bin": {
+    "gemini-stats": "cli.js"
+  },
+  "scripts": {
+    "start": "node cli.js"
+  },
+  "engines": {
+    "node": ">=14"
+  }
+}
