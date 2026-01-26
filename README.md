@@ -2,7 +2,6 @@
 
 A high-performance visual dashboard for tracking your Gemini CLI usage, token consumption, and estimated API costs.
 
-![Uploading image.png…]()
 
 ## ✨ Features
 
