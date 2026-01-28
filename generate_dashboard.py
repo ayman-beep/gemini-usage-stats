@@ -105,6 +105,8 @@ def generate_data():
     # Sort projects by cost descending for the data structure
     sorted_projects = sorted(stats_by_project.items(), key=lambda x: x[1]["cost"], reverse=True)
     
+    sorted_models = sorted(model_usage.items(), key=lambda x: x[1]["cost"], reverse=True)
+    
     return {
         "days": sorted_days,
         "daily_costs": [stats_by_day[d]["cost"] for d in sorted_days],
@@ -112,8 +114,11 @@ def generate_data():
         "projects": [p for p, v in sorted_projects],
         "project_costs": [v["cost"] for v, p in [ (v, p) for p, v in sorted_projects ]],
         "project_tokens": [v["input"] for v, p in [ (v, p) for p, v in sorted_projects ]],
-        "models": list(model_usage.keys()),
-        "model_costs": [v["cost"] for v in model_usage.values()],
+        "models": [m for m, v in sorted_models],
+        "model_costs": [v["cost"] for m, v in sorted_models],
+        "model_inputs": [v["input"] for m, v in sorted_models],
+        "model_outputs": [v["output"] for m, v in sorted_models],
+        "model_tokens": [v["input"] + v["output"] for m, v in sorted_models],
         "totals": {
             "cost": sum(v["cost"] for v in stats_by_day.values()),
             "input": sum(v["input"] for v in stats_by_day.values()),
@@ -196,9 +201,25 @@ def main():
                 </div>
             </div>
             <div class="glass p-6 rounded-2xl">
-                <h3 class="text-lg font-semibold mb-6">Cost by Model</h3>
-                <div style="height: 350px; position: relative;">
+                <h3 class="text-lg font-semibold mb-6">Usage by Model</h3>
+                <div style="height: 220px; position: relative;" class="mb-6">
                     <canvas id="modelChart"></canvas>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs">
+                        <thead class="text-slate-500 uppercase border-b border-slate-700">
+                            <tr>
+                                <th class="py-2 px-1">Model</th>
+                                <th class="py-2 px-1 text-right">Input</th>
+                                <th class="py-2 px-1 text-right">Output</th>
+                                <th class="py-2 px-1 text-right">Total</th>
+                                <th class="py-2 px-1 text-right">Cost</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-800">
+                            {''.join([f"<tr><td class='py-2 px-1 font-medium text-slate-300'>{m}</td><td class='py-2 px-1 text-right text-slate-500'>{i:,}</td><td class='py-2 px-1 text-right text-slate-500'>{o:,}</td><td class='py-2 px-1 text-right text-slate-400'>{t:,}</td><td class='py-2 px-1 text-right text-blue-400 font-semibold'>${v:,.2f}</td></tr>" for m, i, o, t, v in sorted(zip(data['models'], data['model_inputs'], data['model_outputs'], data['model_tokens'], data['model_costs']), key=lambda x: x[4], reverse=True)])}
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>

@@ -169,11 +169,12 @@ def track_usage():
         print(f"{display_name:<50} | {format_num(data['input']):>15} | {data['cost']:>12.4f}")
 
     # 3. Model Summary
-    print("\n" + "USAGE BY MODEL".center(100, "="))
-    print(f"{ 'Model':<40} | {'Input':>15} | {'Output':>12} | {'Cost ($)':>12}")
-    print("-" * 100)
+    print("\n" + "USAGE BY MODEL".center(115, "="))
+    print(f"{ 'Model':<40} | {'Input':>15} | {'Output':>12} | {'Total Tokens':>15} | {'Cost ($)':>12}")
+    print("-" * 115)
     for m, data in sorted(model_usage.items(), key=lambda x: x[1]['cost'], reverse=True):
-        print(f"{m:<40} | {format_num(data['input']):>15} | {format_num(data['output']):>12} | {data['cost']:>12.4f}")
+        total_tokens = data['input'] + data['output']
+        print(f"{m:<40} | {format_num(data['input']):>15} | {format_num(data['output']):>12} | {format_num(total_tokens):>15} | {data['cost']:>12.4f}")
 
     # 4. Overall Stats
     print("\n" + "OVERALL STATISTICS".center(100, "="))
