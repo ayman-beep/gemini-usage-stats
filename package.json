@@ -1,9 +1,10 @@
 {
-  "name": "gemini-usage-stats",
-  "version": "1.0.0",
-  "description": "Visual dashboard for Gemini CLI usage and costs",
+  "name": "ai-cli-usage-stats",
+  "version": "2.0.0",
+  "description": "Visual dashboard for AI CLI usage and costs - Supports Gemini, Codex, and Opencode",
   "main": "cli.js",
   "bin": {
+    "ai-cli-stats": "cli.js",
     "gemini-stats": "cli.js"
   },
   "scripts": {
@@ -17,5 +18,17 @@
   "license": "MIT",
   "engines": {
     "node": ">=14"
-  }
+  },
+  "keywords": [
+    "gemini",
+    "codex",
+    "opencode",
+    "cli",
+    "analytics",
+    "usage",
+    "dashboard",
+    "ai",
+    "tokens",
+    "cost-tracking"
+  ]
 }

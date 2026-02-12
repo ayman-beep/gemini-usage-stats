@@ -5,14 +5,56 @@ import hashlib
 from datetime import datetime
 from collections import defaultdict
 
-# Gemini API Pricing (USD per 1M tokens) as of Jan 2026
+# Multi-CLI API Pricing (USD per 1M tokens) - Updated with Opencode Zen pricing
 PRICING = {
+    # Gemini models
+    "gemini-3-pro": {"input": 2.00, "output": 12.00, "cached": 0.20},
     "gemini-3-pro-preview": {"input": 2.00, "output": 12.00, "cached": 0.20},
     "gemini-3-flash": {"input": 0.50, "output": 3.00, "cached": 0.05},
     "gemini-3-flash-preview": {"input": 0.50, "output": 3.00, "cached": 0.05},
     "gemini-2.5-pro": {"input": 1.25, "output": 10.00, "cached": 0.125},
     "gemini-2.5-flash": {"input": 0.30, "output": 1.20, "cached": 0.03},
     "gemini-2.5-flash-lite": {"input": 0.10, "output": 0.40, "cached": 0.01},
+    
+    # OpenAI / Codex CLI models (Official Codex CLI Pricing)
+    # GPT-5.2 Variants
+    "gpt-5.2": {"input": 1.75, "output": 14.00, "cached": 0.175},
+    "gpt-5.2-instant": {"input": 1.75, "output": 14.00, "cached": 0.175},
+    "gpt-5.2-thinking": {"input": 1.75, "output": 14.00, "cached": 0.175},
+    "gpt-5.2-pro": {"input": 21.00, "output": 168.00, "cached": 2.10},
+    "gpt-5.2-codex": {"input": 1.75, "output": 14.00, "cached": 0.175},
+    # GPT-5.1 Variants
+    "gpt-5.1": {"input": 1.25, "output": 10.00, "cached": 0.125},
+    "gpt-5.1-codex-max": {"input": 1.25, "output": 10.00, "cached": 0.125},
+    "gpt-5.1-codex-mini": {"input": 0.25, "output": 2.00, "cached": 0.025},
+    "gpt-5-nano": {"input": 0.05, "output": 0.40, "cached": 0.005},
+    # Legacy Codex models
+    "gpt-5-codex": {"input": 0.50, "output": 1.50, "cached": 0.025},
+    "gpt-5.3-codex": {"input": 0.30, "output": 1.20, "cached": 0.025},
+    "gpt-4-codex": {"input": 2.00, "output": 6.00, "cached": 0.50},
+    # Other OpenAI models
+    "o3-mini": {"input": 1.10, "output": 4.40, "cached": 0.55},
+    "o1": {"input": 15.00, "output": 60.00, "cached": 7.50},
+    "gpt-4o": {"input": 2.50, "output": 10.00, "cached": 1.25},
+    
+    # Anthropic / Claude models (Opencode Zen pricing)
+    "claude-opus-4-6": {"input": 5.00, "output": 25.00, "cached": 0.50},
+    "claude-opus-4-5": {"input": 5.00, "output": 25.00, "cached": 0.50},
+    "claude-sonnet-4-5": {"input": 3.00, "output": 15.00, "cached": 0.30},
+    "claude-sonnet-4": {"input": 3.00, "output": 15.00, "cached": 0.30},
+    "claude-haiku-4-5": {"input": 1.00, "output": 5.00, "cached": 0.10},
+    "claude-opus-4-1": {"input": 15.00, "output": 75.00, "cached": 1.50},
+    "claude-3-7-sonnet": {"input": 3.00, "output": 15.00, "cached": 0.30},
+    "claude-3-5-sonnet": {"input": 3.00, "output": 15.00, "cached": 0.30},
+    "claude-3-opus": {"input": 15.00, "output": 75.00, "cached": 1.50},
+    
+    # Opencode Zen models
+    "kimi-k2-5": {"input": 0.60, "output": 3.00, "cached": 0.15},
+    "kimi-k2": {"input": 0.60, "output": 3.00, "cached": 0.15},
+    "glm-4-7": {"input": 0.60, "output": 2.20, "cached": 0.11},
+    "glm-4-6": {"input": 0.60, "output": 2.20, "cached": 0.11},
+    "minimax-m2-5": {"input": 0.30, "output": 1.20, "cached": 0.03},
+    "minimax-m2-1": {"input": 0.30, "output": 1.20, "cached": 0.03},
 }
 
 DEFAULT_PRICING = {"input": 0.50, "output": 3.00, "cached": 0.05}
