@@ -6,9 +6,9 @@ import webbrowser
 from datetime import datetime
 from collections import defaultdict
 
-# Multi-CLI API Pricing (USD per 1M tokens) - Updated with Opencode Zen pricing
+# Multi-CLI API Pricing (USD per 1M tokens) - Comprehensive 72+ model coverage
 PRICING = {
-    # Gemini models
+    # ── Google Gemini models ──────────────────────────────────────────────
     "gemini-3-pro": {"input": 2.00, "output": 12.00, "cached": 0.20},
     "gemini-3-pro-preview": {"input": 2.00, "output": 12.00, "cached": 0.20},
     "gemini-3-pro-image-preview": {"input": 2.00, "output": 120.00, "cached": 0.20},
@@ -17,8 +17,12 @@ PRICING = {
     "gemini-2.5-pro": {"input": 1.25, "output": 10.00, "cached": 0.125},
     "gemini-2.5-flash": {"input": 0.30, "output": 1.20, "cached": 0.03},
     "gemini-2.5-flash-lite": {"input": 0.10, "output": 0.40, "cached": 0.01},
-    
-    # OpenAI / Codex CLI models (Official Codex CLI Pricing)
+    "gemini-2.0-flash": {"input": 0.10, "output": 0.40, "cached": 0.025},
+    "gemini-2.0-flash-lite": {"input": 0.075, "output": 0.30, "cached": 0.02},
+    "gemini-1.5-pro": {"input": 1.25, "output": 5.00, "cached": 0.3125},
+    "gemini-1.5-flash": {"input": 0.075, "output": 0.30, "cached": 0.01875},
+
+    # ── OpenAI / Codex CLI models ─────────────────────────────────────────
     # GPT-5.2 Variants
     "gpt-5.2": {"input": 1.75, "output": 14.00, "cached": 0.175},
     "gpt-5.2-instant": {"input": 1.75, "output": 14.00, "cached": 0.175},
@@ -34,12 +38,21 @@ PRICING = {
     "gpt-5-codex": {"input": 0.50, "output": 1.50, "cached": 0.025},
     "gpt-5.3-codex": {"input": 0.30, "output": 1.20, "cached": 0.025},
     "gpt-4-codex": {"input": 2.00, "output": 6.00, "cached": 0.50},
-    # Other OpenAI models
+    # o-series reasoning models
+    "o3": {"input": 10.00, "output": 40.00, "cached": 2.50},
     "o3-mini": {"input": 1.10, "output": 4.40, "cached": 0.55},
+    "o3-pro": {"input": 20.00, "output": 80.00, "cached": 5.00},
+    "o4-mini": {"input": 1.10, "output": 4.40, "cached": 0.55},
     "o1": {"input": 15.00, "output": 60.00, "cached": 7.50},
+    "o1-mini": {"input": 3.00, "output": 12.00, "cached": 1.50},
+    "o1-pro": {"input": 150.00, "output": 600.00, "cached": 75.00},
+    # GPT-4o family
     "gpt-4o": {"input": 2.50, "output": 10.00, "cached": 1.25},
-    
-    # Anthropic / Claude models (current Anthropic API pricing, per 1M tokens)
+    "gpt-4o-mini": {"input": 0.15, "output": 0.60, "cached": 0.075},
+    "gpt-4-turbo": {"input": 10.00, "output": 30.00, "cached": 5.00},
+    "gpt-4": {"input": 30.00, "output": 60.00, "cached": 15.00},
+
+    # ── Anthropic / Claude models ─────────────────────────────────────────
     # cache_write = 1.25x input price, cached (cache_read) = 0.1x input price
     "claude-opus-4-6": {"input": 5.00, "output": 25.00, "cached": 0.50, "cache_write": 6.25},
     "claude-opus-4-5": {"input": 5.00, "output": 25.00, "cached": 0.50, "cache_write": 6.25},
@@ -49,50 +62,82 @@ PRICING = {
     "claude-opus-4-1": {"input": 15.00, "output": 75.00, "cached": 1.50, "cache_write": 18.75},
     "claude-3-7-sonnet": {"input": 3.00, "output": 15.00, "cached": 0.30, "cache_write": 3.75},
     "claude-3-5-sonnet": {"input": 3.00, "output": 15.00, "cached": 0.30, "cache_write": 3.75},
+    "claude-3-5-haiku": {"input": 1.00, "output": 5.00, "cached": 0.10, "cache_write": 1.25},
     "claude-3-opus": {"input": 15.00, "output": 75.00, "cached": 1.50, "cache_write": 18.75},
-    
-    # GPT-OSS models
+    "claude-3-haiku": {"input": 0.25, "output": 1.25, "cached": 0.03, "cache_write": 0.30},
+
+    # ── Meta Llama models (via API providers) ─────────────────────────────
+    "llama-4-scout": {"input": 0.17, "output": 0.17, "cached": 0.017},
+    "llama-4-maverick": {"input": 0.27, "output": 0.35, "cached": 0.027},
+    "llama-3.3-70b": {"input": 0.18, "output": 0.18, "cached": 0.018},
+    "llama-3.3-70b-instruct": {"input": 0.18, "output": 0.18, "cached": 0.018},
+    "llama-3.1-405b": {"input": 1.79, "output": 1.79, "cached": 0.179},
+    "llama-3.1-405b-instruct": {"input": 1.79, "output": 1.79, "cached": 0.179},
+    "llama-3.1-70b": {"input": 0.18, "output": 0.18, "cached": 0.018},
+    "llama-3.1-70b-instruct": {"input": 0.18, "output": 0.18, "cached": 0.018},
+    "llama-3.1-8b": {"input": 0.06, "output": 0.06, "cached": 0.006},
+    "llama-3.1-8b-instruct": {"input": 0.06, "output": 0.06, "cached": 0.006},
+
+    # ── DeepSeek models ───────────────────────────────────────────────────
+    "deepseek-r1": {"input": 0.55, "output": 2.19, "cached": 0.14},
+    "deepseek-v3": {"input": 0.27, "output": 1.10, "cached": 0.07},
+    "deepseek-chat": {"input": 0.27, "output": 1.10, "cached": 0.07},
+    "deepseek-coder": {"input": 0.14, "output": 0.28, "cached": 0.014},
+    "deepseek-reasoner": {"input": 0.55, "output": 2.19, "cached": 0.14},
+
+    # ── Qwen models (Alibaba Cloud) ──────────────────────────────────────
+    "qwen-2.5-coder-32b": {"input": 0.16, "output": 0.16, "cached": 0.016},
+    "qwen-2.5-72b": {"input": 0.30, "output": 0.30, "cached": 0.03},
+    "qwen-3-235b": {"input": 0.50, "output": 2.00, "cached": 0.05},
+    "qwen-max": {"input": 0.80, "output": 2.40, "cached": 0.08},
+
+    # ── GPT-OSS models ───────────────────────────────────────────────────
     "gpt-oss-120b": {"input": 0, "output": 0, "cached": 0},
-    
-    # Opencode Zen models / Chinese models
+
+    # ── Moonshot AI / Kimi models ─────────────────────────────────────────
     "kimi-k2-5": {"input": 0.60, "output": 3.00, "cached": 0.15},
     "kimi-k2.5": {"input": 0.60, "output": 3.00, "cached": 0.15},
     "kimi-k2.5-free": {"input": 0.60, "output": 3.00, "cached": 0.15},
     "kimi-k2": {"input": 0.60, "output": 3.00, "cached": 0.15},
+    "kimi-k1.5": {"input": 0.60, "output": 3.00, "cached": 0.15},
+
+    # ── GLM / Zhipu models ────────────────────────────────────────────────
     "glm-4-7": {"input": 0.60, "output": 2.20, "cached": 0.11},
     "glm-4.7-free": {"input": 0.60, "output": 2.20, "cached": 0.11},
     "glm-4-6": {"input": 0.60, "output": 2.20, "cached": 0.11},
     "glm-4.6": {"input": 0.60, "output": 2.20, "cached": 0.11},
     "glm-5": {"input": 0.80, "output": 2.56, "cached": 0.08},
+
+    # ── Minimax models ────────────────────────────────────────────────────
     "minimax-m2-5": {"input": 0.30, "output": 1.20, "cached": 0.03},
     "minimax-m2-1": {"input": 0.30, "output": 1.20, "cached": 0.03},
+    "minimax-m2.1": {"input": 0.30, "output": 1.20, "cached": 0.03},
     "minimax-m2.1-free": {"input": 0.30, "output": 1.20, "cached": 0.03},
-    
-    # xAI models
+
+    # ── xAI / Grok models ────────────────────────────────────────────────
     "grok-code-fast-1": {"input": 0.20, "output": 1.50, "cached": 0.02},
     "grok-3": {"input": 0.20, "output": 1.50, "cached": 0.02},
     "grok-3-mini": {"input": 0.10, "output": 0.50, "cached": 0.01},
-    
-    # Mistral models
+    "grok-2": {"input": 2.00, "output": 10.00, "cached": 0.50},
+
+    # ── Mistral models ────────────────────────────────────────────────────
     "devstral-2512": {"input": 0.05, "output": 0.22, "cached": 0.005},
     "mistral-large-2411": {"input": 2.00, "output": 6.00, "cached": 0.50},
+    "mistral-large": {"input": 2.00, "output": 6.00, "cached": 0.50},
     "mistral-small-2501": {"input": 0.10, "output": 0.30, "cached": 0.025},
-    
-    # Moonshot AI - Kimi models
-    "kimi-k2.5": {"input": 0.60, "output": 3.00, "cached": 0.15},
-    "kimi-k2": {"input": 0.60, "output": 3.00, "cached": 0.15},
-    "kimi-k1.5": {"input": 0.60, "output": 3.00, "cached": 0.15},
-    
-    # Minimax models
-    "minimax-m2.1": {"input": 0.30, "output": 1.20, "cached": 0.03},
-    "minimax-m2-5": {"input": 0.30, "output": 1.20, "cached": 0.03},
-    "minimax-m2-1": {"input": 0.30, "output": 1.20, "cached": 0.03},
-    
-    # Novita hosted models (devstral-2512, minimax-m2.1)
+    "mistral-small": {"input": 0.10, "output": 0.30, "cached": 0.025},
+    "codestral": {"input": 0.30, "output": 0.90, "cached": 0.075},
+    "mistral-medium": {"input": 2.70, "output": 8.10, "cached": 0.675},
+
+    # ── Cohere models ─────────────────────────────────────────────────────
+    "command-r-plus": {"input": 2.50, "output": 10.00, "cached": 0.625},
+    "command-r": {"input": 0.15, "output": 0.60, "cached": 0.0375},
+
+    # ── Novita hosted models ──────────────────────────────────────────────
     "novita-devstral-2512": {"input": 0.05, "output": 0.22, "cached": 0.005},
     "novita-minimax-m2.1": {"input": 0.30, "output": 1.20, "cached": 0.03},
-    
-    # Stealth models — no public API pricing
+
+    # ── Stealth / unknown models — no public API pricing ──────────────────
     "pony-alpha": {"input": 0, "output": 0, "cached": 0},
     "giga-potato": {"input": 0, "output": 0, "cached": 0},
 }
