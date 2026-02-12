@@ -81,6 +81,90 @@ PRICING = {
     "mistral-large-2411": {"input": 2.00, "output": 6.00, "cached": 0.50},
     "mistral-small-2501": {"input": 0.10, "output": 0.30, "cached": 0.025},
     
+    # ============================================================
+    # OpenRouter-supported models (Kilo Code, Cline, Roo Code, etc.)
+    # Pricing from OpenRouter public pricing (per 1M tokens)
+    # ============================================================
+    
+    # --- Databricks ---
+    "databricks/dbrx-instruct": {"input": 0.75, "output": 2.25, "cached": 0.075},
+    
+    # --- Google Gemini (OpenRouter) ---
+    "google/gemini-2.5-pro-preview": {"input": 1.25, "output": 10.00, "cached": 0.3125},
+    "google/gemini-2.5-flash-preview": {"input": 0.15, "output": 0.60, "cached": 0.0375},
+    "google/gemini-2.0-flash-001": {"input": 0.10, "output": 0.40, "cached": 0.025},
+    "google/gemini-2.0-flash-lite-001": {"input": 0.075, "output": 0.30, "cached": 0.01875},
+    "google/gemini-1.5-pro": {"input": 1.25, "output": 5.00, "cached": 0.3125},
+    "google/gemini-1.5-flash": {"input": 0.075, "output": 0.30, "cached": 0.01875},
+    "google/gemini-1.5-flash-8b": {"input": 0.0375, "output": 0.15, "cached": 0.01},
+    "google/gemini-pro": {"input": 0.125, "output": 0.375, "cached": 0.0125},
+    
+    # --- Anthropic Claude (OpenRouter) ---
+    "anthropic/claude-4-opus": {"input": 15.00, "output": 75.00, "cached": 1.50},
+    "anthropic/claude-4-sonnet": {"input": 3.00, "output": 15.00, "cached": 0.30},
+    "anthropic/claude-3.5-sonnet": {"input": 3.00, "output": 15.00, "cached": 0.30},
+    "anthropic/claude-3.5-haiku": {"input": 0.80, "output": 4.00, "cached": 0.08},
+    "anthropic/claude-3-opus": {"input": 15.00, "output": 75.00, "cached": 1.50},
+    "anthropic/claude-3-sonnet": {"input": 3.00, "output": 15.00, "cached": 0.30},
+    "anthropic/claude-3-haiku": {"input": 0.25, "output": 1.25, "cached": 0.025},
+    
+    # --- OpenAI (OpenRouter) ---
+    "openai/gpt-4o": {"input": 2.50, "output": 10.00, "cached": 1.25},
+    "openai/gpt-4o-mini": {"input": 0.15, "output": 0.60, "cached": 0.075},
+    "openai/gpt-4-turbo": {"input": 10.00, "output": 30.00, "cached": 5.00},
+    "openai/gpt-4": {"input": 30.00, "output": 60.00, "cached": 15.00},
+    "openai/gpt-3.5-turbo": {"input": 0.50, "output": 1.50, "cached": 0.25},
+    "openai/o1": {"input": 15.00, "output": 60.00, "cached": 7.50},
+    "openai/o1-mini": {"input": 3.00, "output": 12.00, "cached": 1.50},
+    "openai/o1-pro": {"input": 150.00, "output": 600.00, "cached": 75.00},
+    "openai/o3": {"input": 10.00, "output": 40.00, "cached": 2.50},
+    "openai/o3-mini": {"input": 1.10, "output": 4.40, "cached": 0.55},
+    "openai/o4-mini": {"input": 1.10, "output": 4.40, "cached": 0.55},
+    
+    # --- Meta Llama (OpenRouter) ---
+    "meta-llama/llama-4-scout": {"input": 0.15, "output": 0.60, "cached": 0.015},
+    "meta-llama/llama-4-maverick": {"input": 0.50, "output": 1.50, "cached": 0.05},
+    "meta-llama/llama-3.3-70b-instruct": {"input": 0.12, "output": 0.30, "cached": 0.012},
+    "meta-llama/llama-3.1-405b-instruct": {"input": 1.00, "output": 2.00, "cached": 0.10},
+    "meta-llama/llama-3.1-70b-instruct": {"input": 0.12, "output": 0.30, "cached": 0.012},
+    "meta-llama/llama-3.1-8b-instruct": {"input": 0.02, "output": 0.05, "cached": 0.002},
+    "meta-llama/llama-3-70b-instruct": {"input": 0.12, "output": 0.30, "cached": 0.012},
+    "meta-llama/llama-3-8b-instruct": {"input": 0.02, "output": 0.05, "cached": 0.002},
+    
+    # --- Mistral (OpenRouter) ---
+    "mistralai/mistral-large": {"input": 2.00, "output": 6.00, "cached": 0.50},
+    "mistralai/mistral-medium": {"input": 2.70, "output": 8.10, "cached": 0.675},
+    "mistralai/mistral-small": {"input": 0.10, "output": 0.30, "cached": 0.025},
+    "mistralai/mixtral-8x22b-instruct": {"input": 0.65, "output": 0.65, "cached": 0.065},
+    "mistralai/mixtral-8x7b-instruct": {"input": 0.24, "output": 0.24, "cached": 0.024},
+    "mistralai/codestral-2501": {"input": 0.30, "output": 0.90, "cached": 0.075},
+    "mistralai/mistral-7b-instruct": {"input": 0.03, "output": 0.055, "cached": 0.003},
+    
+    # --- DeepSeek (OpenRouter) ---
+    "deepseek/deepseek-chat-v3": {"input": 0.27, "output": 1.10, "cached": 0.07},
+    "deepseek/deepseek-r1": {"input": 0.55, "output": 2.19, "cached": 0.14},
+    "deepseek/deepseek-coder": {"input": 0.14, "output": 0.28, "cached": 0.014},
+    
+    # --- Qwen (OpenRouter) ---
+    "qwen/qwen-2.5-72b-instruct": {"input": 0.18, "output": 0.18, "cached": 0.018},
+    "qwen/qwen-2.5-coder-32b-instruct": {"input": 0.07, "output": 0.16, "cached": 0.007},
+    "qwen/qwq-32b": {"input": 0.12, "output": 0.18, "cached": 0.012},
+    "qwen/qwen-2.5-7b-instruct": {"input": 0.03, "output": 0.06, "cached": 0.003},
+    
+    # --- Cohere (OpenRouter) ---
+    "cohere/command-r": {"input": 0.15, "output": 0.60, "cached": 0.015},
+    "cohere/command-r-plus": {"input": 2.50, "output": 10.00, "cached": 0.25},
+    
+    # --- Microsoft Phi (OpenRouter) ---
+    "microsoft/phi-4": {"input": 0.07, "output": 0.14, "cached": 0.007},
+    "microsoft/phi-3-medium-128k-instruct": {"input": 0.14, "output": 0.14, "cached": 0.014},
+    "microsoft/phi-3-mini-128k-instruct": {"input": 0.05, "output": 0.05, "cached": 0.005},
+    
+    # --- Other popular OpenRouter models ---
+    "nvidia/llama-3.1-nemotron-70b-instruct": {"input": 0.12, "output": 0.30, "cached": 0.012},
+    "perplexity/sonar-pro": {"input": 3.00, "output": 15.00, "cached": 0.30},
+    "perplexity/sonar": {"input": 1.00, "output": 1.00, "cached": 0.10},
+    
     # Stealth models — no public API pricing
     "pony-alpha": {"input": 0, "output": 0, "cached": 0},
     "giga-potato": {"input": 0, "output": 0, "cached": 0},
