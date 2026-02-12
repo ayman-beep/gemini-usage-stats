@@ -25,6 +25,15 @@ PRICING = {
     "gpt-5.2-thinking": {"input": 1.75, "output": 14.00, "cached": 0.175},
     "gpt-5.2-pro": {"input": 21.00, "output": 168.00, "cached": 2.10},
     "gpt-5.2-codex": {"input": 1.75, "output": 14.00, "cached": 0.175},
+    # GPT-5 Pro
+    "gpt-5-pro": {"input": 15.00, "output": 120.00, "cached": 1.50},
+    # o1-pro and o3-pro models
+    "o1-pro": {"input": 150.00, "output": 600.00, "cached": 15.00},
+    "o3-pro": {"input": 20.00, "output": 80.00, "cached": 2.00},
+    "o3-deep-research": {"input": 10.00, "output": 40.00, "cached": 1.00},
+    # GPT-4 models
+    "gpt-4-0314": {"input": 30.00, "output": 60.00, "cached": 3.00},
+    "gpt-4": {"input": 30.00, "output": 60.00, "cached": 3.00},
     # GPT-5.1 Variants
     "gpt-5.1": {"input": 1.25, "output": 10.00, "cached": 0.125},
     "gpt-5.1-codex-max": {"input": 1.25, "output": 10.00, "cached": 0.125},

@@ -51,6 +51,9 @@ PRICING = {
     "claude-3-5-sonnet": {"input": 3.00, "output": 15.00, "cached": 0.30, "cache_write": 3.75},
     "claude-3-opus": {"input": 15.00, "output": 75.00, "cached": 1.50, "cache_write": 18.75},
     
+    # GPT-OSS models
+    "gpt-oss-120b": {"input": 0, "output": 0, "cached": 0},
+    
     # Opencode Zen models / Chinese models
     "kimi-k2-5": {"input": 0.60, "output": 3.00, "cached": 0.15},
     "kimi-k2.5": {"input": 0.60, "output": 3.00, "cached": 0.15},
@@ -103,6 +106,12 @@ def normalize_model_name(model):
     normalized = re.sub(r'-\d{8}$', '', model)
     # Remove :free suffix (e.g. "kimi-k2.5:free" -> "kimi-k2.5")
     normalized = re.sub(r':free$', '', normalized)
+    # Remove thinking suffix (e.g. "claude-sonnet-4.5 (thinking)" -> "claude-sonnet-4.5")
+    normalized = re.sub(r'\s*\(thinking\)$', '', normalized, flags=re.IGNORECASE)
+    # Remove high/low/medium suffixes (e.g. "gemini-3-pro (high)" -> "gemini-3-pro")
+    normalized = re.sub(r'\s*\((high|low|medium)\)$', '', normalized, flags=re.IGNORECASE)
+    # Replace spaces with hyphens for consistency (e.g. "Claude Sonnet 4.5" -> "claude-sonnet-4.5")
+    normalized = normalized.replace(' ', '-').lower()
     return normalized
 
 def get_cost(model, input_tokens, output_tokens, cached_tokens, cache_write_tokens=0):
