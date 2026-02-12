@@ -2,6 +2,7 @@ import os
 import json
 import glob
 import hashlib
+import re
 from datetime import datetime
 from collections import defaultdict
 
@@ -56,6 +57,22 @@ PRICING = {
     "minimax-m2-5": {"input": 0.30, "output": 1.20, "cached": 0.03},
     "minimax-m2-1": {"input": 0.30, "output": 1.20, "cached": 0.03},
     
+    # Qwen models (Alibaba Cloud, via OpenRouter pricing)
+    "qwen-2.5-coder-32b-instruct": {"input": 0.20, "output": 0.20, "cached": 0.02},
+    "qwen-2.5-72b-instruct": {"input": 0.36, "output": 0.36, "cached": 0.036},
+    "qwen-2.5-vl-72b-instruct": {"input": 0.40, "output": 0.40, "cached": 0.04},
+    "qwen-2.5-vl-7b-instruct": {"input": 0.10, "output": 0.10, "cached": 0.01},
+    "qwen-2.5-7b-instruct": {"input": 0.05, "output": 0.05, "cached": 0.005},
+    "qwen-qwq-32b": {"input": 0.20, "output": 0.20, "cached": 0.02},
+    "qwen-2.5-max": {"input": 1.60, "output": 6.40, "cached": 0.16},
+    "qwen-2.5-plus": {"input": 0.40, "output": 1.20, "cached": 0.04},
+    "qwen-3-235b-a22b": {"input": 0.20, "output": 0.60, "cached": 0.02},
+    "qwen-3-30b-a3b": {"input": 0.05, "output": 0.15, "cached": 0.005},
+    "qwen-3-32b": {"input": 0.20, "output": 0.20, "cached": 0.02},
+    "qwen-3-8b": {"input": 0.05, "output": 0.05, "cached": 0.005},
+    "qwen-3-4b": {"input": 0.02, "output": 0.02, "cached": 0.002},
+    "qwen-3-0.6b": {"input": 0.01, "output": 0.01, "cached": 0.001},
+    
     # Stealth models — no public API pricing
     "pony-alpha": {"input": 0, "output": 0, "cached": 0},
     "giga-potato": {"input": 0, "output": 0, "cached": 0},
@@ -63,8 +80,22 @@ PRICING = {
 
 DEFAULT_PRICING = {"input": 0, "output": 0, "cached": 0}
 
+def normalize_model_name(model):
+    """Strip date suffixes (e.g. -20251001) and :free suffix from model names for pricing lookup."""
+    # Remove trailing date like -20251001, -20251101, etc.
+    normalized = re.sub(r'-\d{8}$', '', model)
+    # Remove :free suffix (e.g. "kimi-k2.5:free" -> "kimi-k2.5")
+    normalized = re.sub(r':free$', '', normalized)
+    # Remove thinking suffix (e.g. "claude-sonnet-4.5 (thinking)" -> "claude-sonnet-4.5")
+    normalized = re.sub(r'\s*\(thinking\)$', '', normalized, flags=re.IGNORECASE)
+    # Remove high/low/medium suffixes (e.g. "gemini-3-pro (high)" -> "gemini-3-pro")
+    normalized = re.sub(r'\s*\((high|low|medium)\)$', '', normalized, flags=re.IGNORECASE)
+    # Replace spaces with hyphens for consistency (e.g. "Qwen 2.5 Coder 32B Instruct" -> "qwen-2.5-coder-32b-instruct")
+    normalized = normalized.replace(' ', '-').lower()
+    return normalized
+
 def get_cost(model, input_tokens, output_tokens, cached_tokens):
-    pricing = PRICING.get(model, DEFAULT_PRICING)
+    pricing = PRICING.get(model) or PRICING.get(normalize_model_name(model), DEFAULT_PRICING)
     # Subtract cached tokens from total input to get billed non-cached input
     billed_input = max(0, input_tokens - cached_tokens)
     cost = (billed_input / 1_000_000) * pricing["input"] + \

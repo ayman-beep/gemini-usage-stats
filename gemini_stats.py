@@ -74,6 +74,22 @@ PRICING = {
     "minimax-m2-5": {"input": 0.30, "output": 1.20, "cached": 0.03},
     "minimax-m2-1": {"input": 0.30, "output": 1.20, "cached": 0.03},
     
+    # Qwen models (Alibaba Cloud, via OpenRouter pricing)
+    "qwen-2.5-coder-32b-instruct": {"input": 0.20, "output": 0.20, "cached": 0.02},
+    "qwen-2.5-72b-instruct": {"input": 0.36, "output": 0.36, "cached": 0.036},
+    "qwen-2.5-vl-72b-instruct": {"input": 0.40, "output": 0.40, "cached": 0.04},
+    "qwen-2.5-vl-7b-instruct": {"input": 0.10, "output": 0.10, "cached": 0.01},
+    "qwen-2.5-7b-instruct": {"input": 0.05, "output": 0.05, "cached": 0.005},
+    "qwen-qwq-32b": {"input": 0.20, "output": 0.20, "cached": 0.02},
+    "qwen-2.5-max": {"input": 1.60, "output": 6.40, "cached": 0.16},
+    "qwen-2.5-plus": {"input": 0.40, "output": 1.20, "cached": 0.04},
+    "qwen-3-235b-a22b": {"input": 0.20, "output": 0.60, "cached": 0.02},
+    "qwen-3-30b-a3b": {"input": 0.05, "output": 0.15, "cached": 0.005},
+    "qwen-3-32b": {"input": 0.20, "output": 0.20, "cached": 0.02},
+    "qwen-3-8b": {"input": 0.05, "output": 0.05, "cached": 0.005},
+    "qwen-3-4b": {"input": 0.02, "output": 0.02, "cached": 0.002},
+    "qwen-3-0.6b": {"input": 0.01, "output": 0.01, "cached": 0.001},
+    
     # xAI models
     "grok-code-fast-1": {"input": 0.20, "output": 1.50, "cached": 0.02},
     "grok-3": {"input": 0.20, "output": 1.50, "cached": 0.02},
@@ -96,6 +112,12 @@ def normalize_model_name(model):
     normalized = re.sub(r'-\d{8}$', '', model)
     # Remove :free suffix (e.g. "kimi-k2.5:free" -> "kimi-k2.5")
     normalized = re.sub(r':free$', '', normalized)
+    # Remove thinking suffix (e.g. "claude-sonnet-4.5 (thinking)" -> "claude-sonnet-4.5")
+    normalized = re.sub(r'\s*\(thinking\)$', '', normalized, flags=re.IGNORECASE)
+    # Remove high/low/medium suffixes (e.g. "gemini-3-pro (high)" -> "gemini-3-pro")
+    normalized = re.sub(r'\s*\((high|low|medium)\)$', '', normalized, flags=re.IGNORECASE)
+    # Replace spaces with hyphens for consistency (e.g. "Qwen 2.5 Coder 32B Instruct" -> "qwen-2.5-coder-32b-instruct")
+    normalized = normalized.replace(' ', '-').lower()
     return normalized
 
 def get_cost(model, input_tokens, output_tokens, cached_tokens):
