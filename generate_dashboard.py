@@ -509,7 +509,6 @@ def read_cline_family_data(stats_by_day, stats_by_project, model_usage, cli_usag
         "Cline": ["saoudrizwan.claude-dev"],
         "Roo Code": ["rooveterinaryinc.roo-cline", "rooveterinaryinc.roo-code-nightly"],
         "Kilo Code": ["kilocode.kilo-code"],
-        "Antigravity": ["saoudrizwan.claude-dev", "rooveterinaryinc.roo-cline", "rooveterinaryinc.roo-code-nightly", "kilocode.kilo-code"],
     }
     
     # Build all possible paths
@@ -572,9 +571,10 @@ def read_cline_family_data(stats_by_day, stats_by_project, model_usage, cli_usag
                         cli_usage[cli_name]["output"] += o
                         cli_usage[cli_name]["cost"] += cost
                         
-                        # Also track by IDE if this is from Antigravity or other IDE
-                        if base_path in ide_to_cli:
-                            ide_name = ide_to_cli[base_path]
+                        # Also track by IDE (VS Code, Cursor, etc.)
+                        ide_root = os.path.dirname(base_path)
+                        if ide_root in ide_to_cli:
+                            ide_name = ide_to_cli[ide_root]
                             cli_usage[ide_name]["input"] += i
                             cli_usage[ide_name]["output"] += o
                             cli_usage[ide_name]["cost"] += cost
@@ -694,9 +694,10 @@ def read_cline_family_data(stats_by_day, stats_by_project, model_usage, cli_usag
                         cli_usage[cli_name]["output"] += task_output
                         cli_usage[cli_name]["cost"] += task_cost
                         
-                        # Also track by IDE if this is from Antigravity or other IDE
-                        if base_path in ide_to_cli:
-                            ide_name = ide_to_cli[base_path]
+                        # Also track by IDE (VS Code, Cursor, etc.)
+                        ide_root = os.path.dirname(base_path)
+                        if ide_root in ide_to_cli:
+                            ide_name = ide_to_cli[ide_root]
                             cli_usage[ide_name]["input"] += task_input
                             cli_usage[ide_name]["output"] += task_output
                             cli_usage[ide_name]["cost"] += task_cost
