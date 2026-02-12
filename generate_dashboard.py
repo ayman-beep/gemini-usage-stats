@@ -60,6 +60,7 @@ PRICING = {
     "glm-4.7-free": {"input": 0.60, "output": 2.20, "cached": 0.11},
     "glm-4-6": {"input": 0.60, "output": 2.20, "cached": 0.11},
     "glm-4.6": {"input": 0.60, "output": 2.20, "cached": 0.11},
+    "glm-5": {"input": 0.80, "output": 2.56, "cached": 0.08},
     "minimax-m2-5": {"input": 0.30, "output": 1.20, "cached": 0.03},
     "minimax-m2-1": {"input": 0.30, "output": 1.20, "cached": 0.03},
     "minimax-m2.1-free": {"input": 0.30, "output": 1.20, "cached": 0.03},
@@ -88,17 +89,20 @@ PRICING = {
     "novita-devstral-2512": {"input": 0.05, "output": 0.22, "cached": 0.005},
     "novita-minimax-m2.1": {"input": 0.30, "output": 1.20, "cached": 0.03},
     
-    # Stealth (Pony Alpha) — no public API pricing
+    # Stealth models — no public API pricing
     "pony-alpha": {"input": 0, "output": 0, "cached": 0},
+    "giga-potato": {"input": 0, "output": 0, "cached": 0},
 }
-DEFAULT_PRICING = {"input": 0.50, "output": 3.00, "cached": 0.05}
+DEFAULT_PRICING = {"input": 0, "output": 0, "cached": 0}
 
 import re
 
 def normalize_model_name(model):
-    """Strip date suffixes (e.g. -20251001) from model names for pricing lookup."""
+    """Strip date suffixes (e.g. -20251001) and :free suffix from model names for pricing lookup."""
     # Remove trailing date like -20251001, -20251101, etc.
     normalized = re.sub(r'-\d{8}$', '', model)
+    # Remove :free suffix (e.g. "kimi-k2.5:free" -> "kimi-k2.5")
+    normalized = re.sub(r':free$', '', normalized)
     return normalized
 
 def get_cost(model, input_tokens, output_tokens, cached_tokens, cache_write_tokens=0):
@@ -491,11 +495,21 @@ def read_cline_family_data(stats_by_day, stats_by_project, model_usage, cli_usag
         os.path.join(appdata, "Windsurf", "User", "globalStorage"),
     ]
     
+    # IDE to CLI mapping for tracking which IDE the extension data came from
+    ide_to_cli = {
+        os.path.join(appdata, "Code", "User", "globalStorage"): "VS Code",
+        os.path.join(appdata, "Code - Insiders", "User", "globalStorage"): "VS Code Insiders",
+        os.path.join(appdata, "Cursor", "User", "globalStorage"): "Cursor",
+        os.path.join(appdata, "Antigravity", "User", "globalStorage"): "Antigravity",
+        os.path.join(appdata, "Windsurf", "User", "globalStorage"): "Windsurf",
+    }
+    
     # Extension IDs for each tool
     ext_ids = {
         "Cline": ["saoudrizwan.claude-dev"],
         "Roo Code": ["rooveterinaryinc.roo-cline", "rooveterinaryinc.roo-code-nightly"],
         "Kilo Code": ["kilocode.kilo-code"],
+        "Antigravity": ["saoudrizwan.claude-dev", "rooveterinaryinc.roo-cline", "rooveterinaryinc.roo-code-nightly", "kilocode.kilo-code"],
     }
     
     # Build all possible paths
@@ -541,7 +555,14 @@ def read_cline_family_data(stats_by_day, stats_by_project, model_usage, cli_usag
                         
                         # Project from workspace directory
                         cwd = task.get("cwdOnTaskInitialization", "")
-                        project = os.path.basename(cwd) if cwd else cli_name
+                        project = os.path.basename(cwd) if cwd else None
+                        
+                        # Only add to projects if we found an actual project directory
+                        # Don't add CLI names (Cline, Roo Code, Kilo Code) as projects
+                        if project and project != cli_name:
+                            stats_by_project[project]["input"] += i
+                            stats_by_project[project]["output"] += o
+                            stats_by_project[project]["cost"] += cost
                         
                         model_usage[model]["input"] += i
                         model_usage[model]["output"] += o
@@ -551,9 +572,12 @@ def read_cline_family_data(stats_by_day, stats_by_project, model_usage, cli_usag
                         cli_usage[cli_name]["output"] += o
                         cli_usage[cli_name]["cost"] += cost
                         
-                        stats_by_project[project]["input"] += i
-                        stats_by_project[project]["output"] += o
-                        stats_by_project[project]["cost"] += cost
+                        # Also track by IDE if this is from Antigravity or other IDE
+                        if base_path in ide_to_cli:
+                            ide_name = ide_to_cli[base_path]
+                            cli_usage[ide_name]["input"] += i
+                            cli_usage[ide_name]["output"] += o
+                            cli_usage[ide_name]["cost"] += cost
                         
                         stats_by_day[task_date]["input"] += i
                         stats_by_day[task_date]["output"] += o
@@ -589,6 +613,39 @@ def read_cline_family_data(stats_by_day, stats_by_project, model_usage, cli_usag
                         task_date = None
                         task_model = "unknown"
                         
+                        # Try to extract model from api_conversation_history.json first
+                        api_history_file = os.path.join(task_path, "api_conversation_history.json")
+                        if os.path.exists(api_history_file):
+                            try:
+                                with open(api_history_file, "r", encoding="utf-8") as af:
+                                    api_history = json.load(af)
+                                # Look for model in content field within messages
+                                for msg in api_history:
+                                    content = msg.get("content", "")
+                                    # content can be a string or list of dicts
+                                    if isinstance(content, list):
+                                        for item in content:
+                                            if isinstance(item, dict) and item.get("type") == "text":
+                                                text = item.get("text", "")
+                                                if "<model>" in text:
+                                                    model_match = re.search(r'<model>([^<]+)</model>', text)
+                                                    if model_match:
+                                                        task_model = model_match.group(1).strip()
+                                                        # Clean up provider-prefixed model names
+                                                        if "/" in task_model:
+                                                            task_model = task_model.split("/", 1)[1]
+                                                        break
+                                    elif isinstance(content, str) and "<model>" in content:
+                                        model_match = re.search(r'<model>([^<]+)</model>', content)
+                                        if model_match:
+                                            task_model = model_match.group(1).strip()
+                                            if "/" in task_model:
+                                                task_model = task_model.split("/", 1)[1]
+                                    if task_model != "unknown":
+                                        break
+                            except:
+                                pass
+                        
                         for msg in messages:
                             ts = msg.get("ts", 0)
                             if ts and not task_date:
@@ -603,6 +660,7 @@ def read_cline_family_data(stats_by_day, stats_by_project, model_usage, cli_usag
                                     task_cache_reads += usage_data.get("cacheReads", 0) or 0
                                     task_cost += usage_data.get("cost", 0) or 0
                                     # Kilo Code stores inferenceProvider instead of model
+                                    # Only use if we haven't found model from api_conversation_history
                                     if task_model == "unknown" and usage_data.get("inferenceProvider"):
                                         task_model = usage_data["inferenceProvider"]
                                     # If still unknown, label by CLI + protocol
@@ -611,10 +669,11 @@ def read_cline_family_data(stats_by_day, stats_by_project, model_usage, cli_usag
                                 except:
                                     pass
                             
-                            # Try to get model info
-                            model_info = msg.get("modelInfo", {})
-                            if model_info and model_info.get("modelId"):
-                                task_model = model_info["modelId"]
+                            # Try to get model info (only if not already found)
+                            if task_model == "unknown":
+                                model_info = msg.get("modelInfo", {})
+                                if model_info and model_info.get("modelId"):
+                                    task_model = model_info["modelId"]
                         
                         if task_input == 0 and task_output == 0:
                             continue
@@ -635,9 +694,37 @@ def read_cline_family_data(stats_by_day, stats_by_project, model_usage, cli_usag
                         cli_usage[cli_name]["output"] += task_output
                         cli_usage[cli_name]["cost"] += task_cost
                         
-                        stats_by_project[cli_name]["input"] += task_input
-                        stats_by_project[cli_name]["output"] += task_output
-                        stats_by_project[cli_name]["cost"] += task_cost
+                        # Also track by IDE if this is from Antigravity or other IDE
+                        if base_path in ide_to_cli:
+                            ide_name = ide_to_cli[base_path]
+                            cli_usage[ide_name]["input"] += task_input
+                            cli_usage[ide_name]["output"] += task_output
+                            cli_usage[ide_name]["cost"] += task_cost
+                        
+                        # Get project from workspace directory (cwd) if available
+                        # For Cline, this comes from taskHistory.json (cwdOnTaskInitialization)
+                        # For Kilo Code/Roo Code, we try to find it in the messages
+                        project = None
+                        
+                        # Try to get cwd from message metadata (some extensions store it differently)
+                        for msg in messages:
+                            # Check various possible locations for cwd
+                            cwd = msg.get("cwd") or msg.get("workingDirectory") or msg.get("root")
+                            if cwd:
+                                project = os.path.basename(cwd) if cwd else None
+                                break
+                            # Check if there's a modelInfo with project info
+                            model_info = msg.get("modelInfo", {})
+                            if model_info and model_info.get("workspace"):
+                                project = os.path.basename(model_info["workspace"]) if model_info["workspace"] else None
+                                break
+                        
+                        # Only add to projects if we found an actual project directory
+                        # Don't add CLI names (Cline, Roo Code, Kilo Code) as projects
+                        if project and project != cli_name:
+                            stats_by_project[project]["input"] += task_input
+                            stats_by_project[project]["output"] += task_output
+                            stats_by_project[project]["cost"] += task_cost
                         
                         stats_by_day[task_date]["input"] += task_input
                         stats_by_day[task_date]["output"] += task_output
@@ -704,7 +791,7 @@ def main():
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI CLI Usage Dashboard - Gemini, Codex & Opencode</title>
+    <title>AI CLI Usage Dashboard - Gemini, Codex, Opencode & Antigravity</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -723,7 +810,7 @@ def main():
         <header class="mb-10 flex justify-between items-end">
             <div>
                 <h1 class="text-4xl font-bold tracking-tight text-white mb-2">AI CLI <span class="text-blue-500">Analytics</span></h1>
-                <p class="text-slate-400">Real-time usage and cost tracking for Gemini, Codex & Opencode CLI</p>
+                <p class="text-slate-400">Real-time usage and cost tracking for Gemini, Codex, Opencode & Antigravity CLI</p>
             </div>
             <div class="text-right">
                 <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Last Updated</span>
@@ -966,7 +1053,7 @@ def main():
         f.write(html_template)
     
     print(f"[OK] Multi-CLI Dashboard generated: {output_path}")
-    print(f"[INFO] Now tracking: Gemini CLI, Codex CLI, Opencode CLI, Ampcode CLI, Cline, Roo Code, and Kilo Code")
+    print(f"[INFO] Now tracking: Gemini CLI, Codex CLI, Opencode CLI, Ampcode CLI, Cline, Roo Code, Kilo Code, and Antigravity")
     webbrowser.open(f"file://{output_path}")
 
 if __name__ == "__main__":

@@ -52,16 +52,42 @@ PRICING = {
     
     # Opencode Zen models
     "kimi-k2-5": {"input": 0.60, "output": 3.00, "cached": 0.15},
+    "kimi-k2.5": {"input": 0.60, "output": 3.00, "cached": 0.15},
     "kimi-k2": {"input": 0.60, "output": 3.00, "cached": 0.15},
+    "kimi-k1.5": {"input": 0.60, "output": 3.00, "cached": 0.15},
     "glm-4-7": {"input": 0.60, "output": 2.20, "cached": 0.11},
     "glm-4-6": {"input": 0.60, "output": 2.20, "cached": 0.11},
+    "glm-5": {"input": 0.80, "output": 2.56, "cached": 0.08},
+    "minimax-m2.1": {"input": 0.30, "output": 1.20, "cached": 0.03},
     "minimax-m2-5": {"input": 0.30, "output": 1.20, "cached": 0.03},
     "minimax-m2-1": {"input": 0.30, "output": 1.20, "cached": 0.03},
+    
+    # xAI models
+    "grok-code-fast-1": {"input": 0.20, "output": 1.50, "cached": 0.02},
+    "grok-3": {"input": 0.20, "output": 1.50, "cached": 0.02},
+    "grok-3-mini": {"input": 0.10, "output": 0.50, "cached": 0.01},
+    
+    # Mistral models
+    "devstral-2512": {"input": 0.05, "output": 0.22, "cached": 0.005},
+    "mistral-large-2411": {"input": 2.00, "output": 6.00, "cached": 0.50},
+    "mistral-small-2501": {"input": 0.10, "output": 0.30, "cached": 0.025},
+    
+    # Stealth models — no public API pricing
+    "pony-alpha": {"input": 0, "output": 0, "cached": 0},
+    "giga-potato": {"input": 0, "output": 0, "cached": 0},
 }
-DEFAULT_PRICING = {"input": 0.50, "output": 3.00, "cached": 0.05}
+DEFAULT_PRICING = {"input": 0, "output": 0, "cached": 0}
+
+def normalize_model_name(model):
+    """Strip date suffixes (e.g. -20251001) and :free suffix from model names for pricing lookup."""
+    # Remove trailing date like -20251001, -20251101, etc.
+    normalized = re.sub(r'-\d{8}$', '', model)
+    # Remove :free suffix (e.g. "kimi-k2.5:free" -> "kimi-k2.5")
+    normalized = re.sub(r':free$', '', normalized)
+    return normalized
 
 def get_cost(model, input_tokens, output_tokens, cached_tokens):
-    pricing = PRICING.get(model, DEFAULT_PRICING)
+    pricing = PRICING.get(model) or PRICING.get(normalize_model_name(model), DEFAULT_PRICING)
     # Subtract cached tokens from total input to get billed non-cached input
     billed_input = max(0, input_tokens - cached_tokens)
     cost_input = (billed_input / 1_000_000) * pricing["input"]

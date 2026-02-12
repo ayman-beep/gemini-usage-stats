@@ -55,9 +55,13 @@ PRICING = {
     "glm-4-6": {"input": 0.60, "output": 2.20, "cached": 0.11},
     "minimax-m2-5": {"input": 0.30, "output": 1.20, "cached": 0.03},
     "minimax-m2-1": {"input": 0.30, "output": 1.20, "cached": 0.03},
+    
+    # Stealth models — no public API pricing
+    "pony-alpha": {"input": 0, "output": 0, "cached": 0},
+    "giga-potato": {"input": 0, "output": 0, "cached": 0},
 }
 
-DEFAULT_PRICING = {"input": 0.50, "output": 3.00, "cached": 0.05}
+DEFAULT_PRICING = {"input": 0, "output": 0, "cached": 0}
 
 def get_cost(model, input_tokens, output_tokens, cached_tokens):
     pricing = PRICING.get(model, DEFAULT_PRICING)
