@@ -5,7 +5,6 @@ roots = [
     r'C:\Users\User\AppData\Roaming\Code - Insiders\User\globalStorage',
     r'C:\Users\User\AppData\Roaming\Cursor\User\globalStorage',
     r'C:\Users\User\AppData\Roaming\Windsurf\User\globalStorage',
-    r'C:\Users\User\AppData\Roaming\Antigravity\User\globalStorage',
 ]
 
 exts = ['rooveterinaryinc.roo-cline', 'rooveterinaryinc.roo-code-nightly']

@@ -1,6 +1,26 @@
 import json, os, glob
 
-base = os.path.join(os.environ['APPDATA'], 'Antigravity', 'User', 'globalStorage', 'saoudrizwan.claude-dev')
+appdata = os.environ.get("APPDATA")
+
+# Check multiple IDE roots for Cline
+ide_roots = [
+    os.path.join(appdata, "Code", "User", "globalStorage", "saoudrizwan.claude-dev"),
+    os.path.join(appdata, "Code - Insiders", "User", "globalStorage", "saoudrizwan.claude-dev"),
+    os.path.join(appdata, "Cursor", "User", "globalStorage", "saoudrizwan.claude-dev"),
+    os.path.join(appdata, "Windsurf", "User", "globalStorage", "saoudrizwan.claude-dev"),
+]
+
+# Find the first valid path
+base = None
+for path in ide_roots:
+    if os.path.exists(path):
+        base = path
+        break
+
+if base is None:
+    print("Cline not found in any IDE")
+    exit(1)
+
 files = glob.glob(os.path.join(base, 'tasks', '*', 'api_conversation_history.json'))
 print('api_conversation_history.json files:', len(files))
 

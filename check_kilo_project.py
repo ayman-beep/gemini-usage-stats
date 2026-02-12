@@ -1,7 +1,27 @@
 import os
 import json
 
-base = os.path.join(os.environ['APPDATA'], 'Antigravity', 'User', 'globalStorage', 'kilocode.kilo-code', 'tasks')
+appdata = os.environ.get("APPDATA")
+
+# Check multiple IDE roots for Kilo Code
+ide_roots = [
+    os.path.join(appdata, "Code", "User", "globalStorage", "kilocode.kilo-code", "tasks"),
+    os.path.join(appdata, "Code - Insiders", "User", "globalStorage", "kilocode.kilo-code", "tasks"),
+    os.path.join(appdata, "Cursor", "User", "globalStorage", "kilocode.kilo-code", "tasks"),
+    os.path.join(appdata, "Windsurf", "User", "globalStorage", "kilocode.kilo-code", "tasks"),
+]
+
+# Find the first valid path
+base = None
+for path in ide_roots:
+    if os.path.exists(path):
+        base = path
+        break
+
+if base is None:
+    print("Kilo Code not found in any IDE")
+    exit(1)
+
 task_ids = os.listdir(base)[:5]
 
 for tid in task_ids:

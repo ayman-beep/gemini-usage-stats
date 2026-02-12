@@ -1,6 +1,26 @@
 import json, os
 
-base = os.path.join(os.environ['APPDATA'], 'Antigravity', 'User', 'globalStorage', 'saoudrizwan.claude-dev', 'tasks')
+appdata = os.environ.get("APPDATA")
+
+# Check multiple IDE roots for Cline
+ide_roots = [
+    os.path.join(appdata, "Code", "User", "globalStorage", "saoudrizwan.claude-dev", "tasks"),
+    os.path.join(appdata, "Code - Insiders", "User", "globalStorage", "saoudrizwan.claude-dev", "tasks"),
+    os.path.join(appdata, "Cursor", "User", "globalStorage", "saoudrizwan.claude-dev", "tasks"),
+    os.path.join(appdata, "Windsurf", "User", "globalStorage", "saoudrizwan.claude-dev", "tasks"),
+]
+
+# Find the first valid path
+base = None
+for path in ide_roots:
+    if os.path.exists(path):
+        base = path
+        break
+
+if base is None:
+    print("Cline not found in any IDE")
+    exit(1)
+
 task_ids = [d for d in os.listdir(base) if os.path.isdir(os.path.join(base, d))]
 print('Task folders:', len(task_ids))
 

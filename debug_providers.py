@@ -1,7 +1,9 @@
 import json, os
 
-# Check Kilo cache for provider-to-model mappings
-cache = os.path.join(os.environ["APPDATA"], "Antigravity", "User", "globalStorage", "kilocode.kilo-code", "cache")
+appdata = os.environ.get("APPDATA", os.path.join(os.path.expanduser("~"), "AppData", "Roaming"))
+
+# Check Kilo cache for provider-to-model mappings (using VS Code storage)
+cache = os.path.join(appdata, "Code", "User", "globalStorage", "kilocode.kilo-code", "cache")
 for f in os.listdir(cache):
     if "endpoint" in f:
         data = json.load(open(os.path.join(cache, f), "r", encoding="utf-8"))
@@ -11,7 +13,7 @@ for f in os.listdir(cache):
             break
 
 # Now check each task to find the actual model used per provider
-base = os.path.join(os.environ["APPDATA"], "Antigravity", "User", "globalStorage", "kilocode.kilo-code", "tasks")
+base = os.path.join(appdata, "Code", "User", "globalStorage", "kilocode.kilo-code", "tasks")
 provider_models = {}
 for tid in os.listdir(base):
     ui = os.path.join(base, tid, "ui_messages.json")
@@ -39,9 +41,9 @@ print("\nProvider -> Model mapping from task requests:")
 for p, models in sorted(provider_models.items()):
     print(f"  {p or '(none)'}: {models}")
 
-# Also check Roo Code
+# Also check Roo Code (using standard VS Code storage)
 for ext in ["rooveterinaryinc.roo-cline", "rooveterinaryinc.roo-code-nightly"]:
-    roo_base = os.path.join(os.environ["APPDATA"], "Antigravity", "User", "globalStorage", ext, "tasks")
+    roo_base = os.path.join(appdata, "Code", "User", "globalStorage", ext, "tasks")
     if not os.path.exists(roo_base):
         continue
     for tid in os.listdir(roo_base):

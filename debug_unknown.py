@@ -2,14 +2,32 @@ import json, os, glob
 from collections import Counter
 
 appdata = os.environ.get("APPDATA")
+
+# Check multiple IDE roots for Kilo, Roo, and Cline
+ide_roots = [
+    os.path.join(appdata, "Code", "User", "globalStorage"),
+    os.path.join(appdata, "Code - Insiders", "User", "globalStorage"),
+    os.path.join(appdata, "Cursor", "User", "globalStorage"),
+    os.path.join(appdata, "Windsurf", "User", "globalStorage"),
+]
+
+# Extension IDs to check
 bases = {
-    "Cline": os.path.join(appdata, "Antigravity", "User", "globalStorage", "saoudrizwan.claude-dev"),
-    "Roo Code": os.path.join(appdata, "Antigravity", "User", "globalStorage", "rooveterinaryinc.roo-cline"),
-    "Roo Nightly": os.path.join(appdata, "Antigravity", "User", "globalStorage", "rooveterinaryinc.roo-code-nightly"),
-    "Kilo Code": os.path.join(appdata, "Antigravity", "User", "globalStorage", "kilocode.kilo-code"),
+    "Cline": "saoudrizwan.claude-dev",
+    "Roo Code": "rooveterinaryinc.roo-cline",
+    "Roo Nightly": "rooveterinaryinc.roo-code-nightly",
+    "Kilo Code": "kilocode.kilo-code",
 }
 
-for name, base in bases.items():
+# Build full paths for all IDEs
+all_bases = {}
+for ide_root in ide_roots:
+    ide_name = os.path.basename(os.path.dirname(ide_root))
+    for name, ext_id in bases.items():
+        key = f"{name} ({ide_name})"
+        all_bases[key] = os.path.join(ide_root, ext_id)
+
+for name, base in all_bases.items():
     # Check taskHistory
     hist = os.path.join(base, "state", "taskHistory.json")
     if os.path.exists(hist):

@@ -555,12 +555,11 @@ def read_cline_family_data(stats_by_day, stats_by_project, model_usage, cli_usag
     home_dir = os.path.expanduser("~")
     appdata = os.environ.get("APPDATA", os.path.join(home_dir, "AppData", "Roaming"))
     
-    # All possible IDE storage roots (VS Code, Insiders, Cursor, Antigravity, Windsurf, etc.)
+    # All possible IDE storage roots (VS Code, Insiders, Cursor, Windsurf, etc.)
     ide_roots = [
         os.path.join(appdata, "Code", "User", "globalStorage"),
         os.path.join(appdata, "Code - Insiders", "User", "globalStorage"),
         os.path.join(appdata, "Cursor", "User", "globalStorage"),
-        os.path.join(appdata, "Antigravity", "User", "globalStorage"),
         os.path.join(appdata, "Windsurf", "User", "globalStorage"),
     ]
     
@@ -569,7 +568,6 @@ def read_cline_family_data(stats_by_day, stats_by_project, model_usage, cli_usag
         os.path.join(appdata, "Code", "User", "globalStorage"): "VS Code",
         os.path.join(appdata, "Code - Insiders", "User", "globalStorage"): "VS Code Insiders",
         os.path.join(appdata, "Cursor", "User", "globalStorage"): "Cursor",
-        os.path.join(appdata, "Antigravity", "User", "globalStorage"): "Antigravity",
         os.path.join(appdata, "Windsurf", "User", "globalStorage"): "Windsurf",
     }
     
@@ -861,7 +859,7 @@ def main():
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI CLI Usage Dashboard - Gemini, Codex, Opencode & Antigravity</title>
+    <title>AI CLI Usage Dashboard - Gemini, Codex, Opencode & Cline</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -880,7 +878,7 @@ def main():
         <header class="mb-10 flex justify-between items-end">
             <div>
                 <h1 class="text-4xl font-bold tracking-tight text-white mb-2">AI CLI <span class="text-blue-500">Analytics</span></h1>
-                <p class="text-slate-400">Real-time usage and cost tracking for Gemini, Codex, Opencode & Antigravity CLI</p>
+                <p class="text-slate-400">Real-time usage and cost tracking for Gemini, Codex, Opencode & Cline, Roo Code, Kilo Code CLI</p>
             </div>
             <div class="text-right">
                 <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Last Updated</span>
@@ -1123,7 +1121,7 @@ def main():
         f.write(html_template)
     
     print(f"[OK] Multi-CLI Dashboard generated: {output_path}")
-    print(f"[INFO] Now tracking: Gemini CLI, Codex CLI, Opencode CLI, Ampcode CLI, Cline, Roo Code, Kilo Code, and Antigravity")
+    print(f"[INFO] Now tracking: Gemini CLI, Codex CLI, Opencode CLI, Ampcode CLI, Cline, Roo Code, and Kilo Code")
     webbrowser.open(f"file://{output_path}")
 
 if __name__ == "__main__":

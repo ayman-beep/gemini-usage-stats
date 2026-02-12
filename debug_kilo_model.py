@@ -1,7 +1,8 @@
 import json, os, re
 from collections import Counter
 
-base = os.path.join(os.environ["APPDATA"], "Antigravity", "User", "globalStorage", "kilocode.kilo-code", "tasks")
+appdata = os.environ.get("APPDATA", os.path.join(os.path.expanduser("~"), "AppData", "Roaming"))
+base = os.path.join(appdata, "Code", "User", "globalStorage", "kilocode.kilo-code", "tasks")
 dirs = sorted(os.listdir(base))
 
 provider_counter = Counter()
