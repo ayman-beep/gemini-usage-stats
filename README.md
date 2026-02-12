@@ -22,7 +22,7 @@ A high-performance visual dashboard for tracking your AI CLI tools usage, token 
 No installation required! Just run this command in your terminal:
 
 ```bash
-npx github:ayman-beep/gemini-usage-stats
+npx https://github.com/ayman-beep/cli-stats
 ```
 
 The dashboard will be generated and **automatically open in your default browser**.
