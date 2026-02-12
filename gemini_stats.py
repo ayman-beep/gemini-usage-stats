@@ -68,6 +68,9 @@ PRICING = {
     "glm-4-6": {"input": 0.60, "output": 2.20, "cached": 0.11},
     "glm-5": {"input": 0.80, "output": 2.56, "cached": 0.08},
     "minimax-m2.1": {"input": 0.30, "output": 1.20, "cached": 0.03},
+    "minimax-m2.1-free": {"input": 0.30, "output": 1.20, "cached": 0.03},
+    "minimax-m2.5": {"input": 0.30, "output": 1.20, "cached": 0.03},
+    "minimax-m2.5:free": {"input": 0.30, "output": 1.20, "cached": 0.03},
     "minimax-m2-5": {"input": 0.30, "output": 1.20, "cached": 0.03},
     "minimax-m2-1": {"input": 0.30, "output": 1.20, "cached": 0.03},
     
